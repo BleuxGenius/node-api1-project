@@ -38,7 +38,7 @@ server.get('/api/users/:id', (req, res) => {
     })
 })
 
-// Create a POST 
+//  POST 
 
 server.post('/api/users', (req, res) => {
     console.log(req.body);
