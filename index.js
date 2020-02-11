@@ -39,7 +39,6 @@ server.get('/api/users/:id', (req, res) => {
 })
 
 //  POST 
-
 server.post('/api/users', (req, res) => {
     console.log(req.body);
     const { name, bio } = req.body;
@@ -72,7 +71,6 @@ server.post('/api/users', (req, res) => {
 });
 
 // Delete 
-
 server.delete('/api/users/:id', (req, res) => {
     const id = req.params.id;
     DataBase.remove(id)
@@ -92,6 +90,35 @@ server.delete('/api/users/:id', (req, res) => {
             errorMessage: "the user could not be removed",
         });
     });
+});
+
+
+// Update
+server.put('/api/users/:id', (req, res) => {
+    const id = req.params.id;
+    const {name, bio } = req.body;
+    if (!name || !bio) {
+        res.status(400).json({ errorMessage: 'Please provide name and bio for the user.'});
+    }
+
+    DataBase.update(id, {name, bio})
+    .then(updated => {
+        if (updated) {
+            DataBase.findById(id)
+            .then(user => res.status(200).json(user))
+            .catch(err => {
+                console.log(err);
+                res.status(500).json({errorMessage: 'The user information could not be moditifed.'})
+            });
+        } else {
+            res.status(404).json({ errorMessage: 'The user with the specified ID does not exist.'});
+        }
+    })
+    .catch(err => {
+        console.log(err);
+        res.status(500).json({ errorMessage: 'error updating user'})
+    });
+
 });
 
 
